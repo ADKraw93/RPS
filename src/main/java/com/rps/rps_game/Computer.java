@@ -7,6 +7,11 @@ public class Computer implements Player {
     private static final Random moveGenerator = new Random();
     private static final String name = "Komputer";
     private int numberOfPoints = 0;
+    private int drawLimit;
+
+    public Computer(int drawLimit) {
+        this.drawLimit = drawLimit;
+    }
 
     @Override
     public String getName() {
@@ -30,6 +35,6 @@ public class Computer implements Player {
 
     @Override
     public String gamersMove() {
-        return String.valueOf(moveGenerator.nextInt(3) + 1);
+        return String.valueOf(moveGenerator.nextInt(drawLimit) + 1);
     }
 }

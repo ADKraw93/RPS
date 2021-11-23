@@ -7,4 +7,5 @@ public interface GameRules {
     int check(int player1Move, int player2Move);
     List<String> getAvailableMoves();
     List<String> getPlaysAllowed();
+    String decodeMoves(String moveCode);
 }

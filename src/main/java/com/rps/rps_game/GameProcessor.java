@@ -38,41 +38,14 @@ public class GameProcessor {
 
                //procedury ponownej rozgrywki gracza 1
                if("n".equals(player1Move)) {
-                   if (player1.getPoints() < numberOfWins && player2.getPoints() < numberOfWins) {
-                       printSureToExitMessage();
-                       player1Move = player1.gamersMove();
-                       if ("T".equals(player1Move)) {
-                           player2.setPoints(0);
-                           player1.setPoints(0);
-                           printNewGameMessage();
-                       } else {
-                           printGoOnMessage();
-                           skipPlayer2 = true;
-                       }
-                   } else {
-                       player1.setPoints(0);
-                       player2.setPoints(0);
-                       printNewGameMessage();
-                   }
+                   skipPlayer2 = verifyNewGame();
                }
 
                //procedury wyjścia z gry gracza 1
-               if("x".equals(player1Move)) {
-                   if(player1.getPoints() < numberOfWins && player2.getPoints() < numberOfWins){
-                       printSureToExitMessage();
-                       player1Move = player1.gamersMove();
-                       if("T".equals(player1Move)) {
-                           printNiceToMeetMessage(player1.getName());
-                           break;
-                       } else {
-                           printGoOnMessage();
-                           skipPlayer1 = true;
-                       }
-                   } else {
-                       printNiceToMeetMessage(player1.getName());
-                       break;
-                   }
+               if("x".equals(player1Move)){
+                   skipPlayer2 = verifyExit(player1);
                }
+
            }
 
            if(!skipPlayer2){
@@ -83,40 +56,12 @@ public class GameProcessor {
 
                //procedury ponownej rozgrywki gracza 2
                if("n".equals(player2Move)){
-                   if(player1.getPoints() < numberOfWins && player2.getPoints() < numberOfWins){
-                       printSureToExitMessage();
-                       player2Move = player2.gamersMove();
-                       if("T".equals(player2Move)){
-                           player2.setPoints(0);
-                           player1.setPoints(0);
-                           printNewGameMessage();
-                       } else {
-                           printGoOnMessage();
-                           skipPlayer1 = true;
-                       }
-                   } else {
-                       player1.setPoints(0);
-                       player2.setPoints(0);
-                       printNewGameMessage();
-                   }
+                   skipPlayer1 = verifyNewGame();
                }
 
                //procedury wyjścia z gry gracza 2
-               if("x".equals(player2Move)) {
-                   if(player1.getPoints() < numberOfWins && player2.getPoints() < numberOfWins){
-                       printSureToExitMessage();
-                       player2Move = player2.gamersMove();
-                       if("T".equals(player2Move)) {
-                           printNiceToMeetMessage(player2.getName());
-                           break;
-                       } else {
-                           printGoOnMessage();
-                           skipPlayer1 = true;
-                       }
-                   } else {
-                       printNiceToMeetMessage(player2.getName());
-                       break;
-                   }
+               if("x".equals(player2Move)){
+                   skipPlayer1 = verifyExit(player2);
                }
            }
 
@@ -136,7 +81,8 @@ public class GameProcessor {
                     printWinMessage(player1.getName());
                 }
 
-                if(!(player1 instanceof Computer) && !(player2 instanceof Computer)){ //zabezpieczenie jakbym puścił grę dwóch komputerów, żeby pętla się przerwała bo żaden nie kliknie x
+                //zabezpieczenie jakbym puścił grę dwóch komputerów, żeby pętla się przerwała bo żaden nie kliknie x
+                if(!(player1 instanceof Computer) || !(player2 instanceof Computer)){
                     printDecideWhatToDoMessage();
                 } else {
                     break;
@@ -145,14 +91,53 @@ public class GameProcessor {
         }
     }
 
-    public int playATurn (String player1Move, String player2Move){
+    private int playATurn (String player1Move, String player2Move){
         int turnResult;
         turnResult = rules.check(parseInt(player1Move)-1, parseInt(player2Move)-1);
-            System.out.println(player1.getName() + " zagrał/a: " + decodeMoves(player1Move) +
-                    ", " + player2.getName() + " zagrał: " + decodeMoves(player2Move) +
+            System.out.println(player1.getName() + " zagrał/a: " + rules.decodeMoves(player1Move) +
+                    ", " + player2.getName() + " zagrał: " + rules.decodeMoves(player2Move) +
                     ", " + decodeTurnResult(turnResult));
 
         return turnResult;
+    }
+
+    private boolean verifyExit(Player player){
+            if(player1.getPoints() < numberOfWins && player2.getPoints() < numberOfWins){
+                printSureToExitMessage();
+                String playerMove = player.gamersMove();
+                if("T".equals(playerMove)) {
+                    printNiceToMeetMessage(player.getName());
+                    System.exit(0);
+                } else {
+                    printGoOnMessage();
+                    return true;
+                }
+            } else {
+                printNiceToMeetMessage(player2.getName());
+                System.exit(0);
+            }
+        return false;
+    }
+
+    private boolean verifyNewGame(){
+
+            if(player1.getPoints() < numberOfWins && player2.getPoints() < numberOfWins){
+                printSureToExitMessage();
+                String playerMove = player2.gamersMove();
+                if("T".equals(playerMove)){
+                    player2.setPoints(0);
+                    player1.setPoints(0);
+                    printNewGameMessage();
+                } else {
+                    printGoOnMessage();
+                    return true;
+                }
+            } else {
+                player1.setPoints(0);
+                player2.setPoints(0);
+                printNewGameMessage();
+            }
+        return false;
     }
 
     private boolean checkPlayerMove(String move) {
@@ -169,17 +154,6 @@ public class GameProcessor {
             return false;
         }
         return true;
-    }
-
-    // metody pomocnicze
-    private String decodeMoves (String moveCode){
-        String decodeResult = "błąd";
-
-        if ("1".equals(moveCode)) decodeResult = "kamień";
-        if ("2".equals(moveCode)) decodeResult = "papier";
-        if ("3".equals(moveCode)) decodeResult = "nożyce";
-
-        return decodeResult;
     }
 
     private String decodeTurnResult (int turnResultCode){

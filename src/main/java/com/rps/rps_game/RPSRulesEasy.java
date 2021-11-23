@@ -5,6 +5,8 @@ import java.util.List;
 
 public class RPSRulesEasy implements GameRules {
 
+    private static final int drawLimit = 3;
+
     private static final List<String> availableMoves = List.of(
             "x", "n", "1", "2", "3"
     );
@@ -31,4 +33,26 @@ public class RPSRulesEasy implements GameRules {
         return playsAllowed;
     }
 
+    public final int getDrawLimit() { return drawLimit;}
+
+    public String decodeMoves (String moveCode){
+
+        String decodeResult;
+
+        switch(moveCode){
+            case "1":
+                decodeResult = "kamieñ";
+                break;
+            case "2":
+                decodeResult = "papier";
+                break;
+            case "3":
+                decodeResult = "no¿yce";
+                break;
+            default:
+                decodeResult = "b³¹d";
+                break;
+        }
+        return decodeResult;
+    }
 }

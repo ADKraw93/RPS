@@ -7,10 +7,11 @@ public class MainRunner {
         var playerName = Input.nameInput();
         var numberOfWins = Input.numberOfWinsInput();
 
-        var player1 = new Computer();
-        var player2 = new HumanPlayer(playerName);
-        //var player2 = new Computer();
         var rules = new RPSRulesEasy();
+        var player1 = new Computer(rules.getDrawLimit());
+        var player2 = new HumanPlayer(playerName);
+        //ar player2 = new Computer();
+
 
         GameProcessor gameProcessor = new GameProcessor(player1, player2, rules, numberOfWins);
 
